@@ -1,6 +1,10 @@
+from models.player_model import Player
+from tinydb import Query, TinyDB
+
 class PlayerView(object):
     def __init__(self, controller):
         self.controller = controller
+        self.db = TinyDB('db.json')
 
 
     def navigate_to_menu(self, message):
@@ -24,8 +28,6 @@ class PlayerView(object):
         Voici les actions possibles depuis ce menu : \n
         [1]: Afficher tous les joueurs\n
         [2]: Ajouter un nouveau joueur\n
-        [3]: Modifier un joueur (pas encore implémenté)\n
-        [4]: Supprimer un joueur (pas encore implémenté)\n
         [0]: Retourner au menu parent (pas encore implémenté)\n
         [X]: Aller au menu précédent (pas encore implémenté)\n
         [Z]: Sortir de l'application (pas encore implémenté)\n
@@ -70,7 +72,6 @@ class PlayerView(object):
         
         self.navigate_to_menu(message)
 
-
     def display_create_player(self):
         """
         Affiche le menu de création d'un joueur
@@ -100,4 +101,5 @@ class PlayerView(object):
         
         self.navigate_to_menu(message)
 
-
+    def display_erase_player(self):
+        self.db.count(Query().type == 'player')

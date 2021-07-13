@@ -7,6 +7,7 @@ from models.tournament_model import Tournament
 from views.home_view import HomeView
 from controllers.player_controller import PlayerController
 from controllers.Tournament_controller import TournamentController
+from views.tournament_view import TournamentView
 
 
 class HomeController(object):
@@ -16,6 +17,7 @@ class HomeController(object):
         self.player_controller = PlayerController(self.view)
         self.tournament_model = Tournament
         self.Tournament_controller = TournamentController(self.view)
+        self.tournament_view = TournamentView(self)
 
 
     def display_home(self):
@@ -48,6 +50,8 @@ class HomeController(object):
         elif menu_option == "4":
             message = "Désolé, ce menu n'est pas encore implémenté !\nVeuillez réessayer : "
             return self.view.navigate_to_menu(message)
+        elif menu_option == "5":
+            return self.tournament_view.generate_pairs("test")
         elif menu_option == "X":
             message = "Aurevoir !\n"
             sys.exit()

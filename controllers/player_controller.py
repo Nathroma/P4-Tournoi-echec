@@ -12,14 +12,13 @@ from views.player_view import PlayerView
 class PlayerController(object):
     def __init__(self, parent_view):
         # A la création du controleur, on peut le lier à son modèle et sa vue
-        self.model = Player()
+        self.model = Player
         self.view = PlayerView(self)
         self.parent_view = parent_view
 
 
     def save_player(self, player):
-        new_player = self.model(player.nom, player.prenom, player.date_naissance, player.sexe, 
-                player.sexe, player.classement)
+        new_player = self.model(player['nom'], player['prenom'], player['date_naissance'], player['sexe'])
         return new_player.save()
 
 
@@ -37,7 +36,7 @@ class PlayerController(object):
         if menu_option == "0":
             return self.parent_view.display_home()
         elif menu_option == "1":
-            all_players = self.model.get_all()
+            all_players = self.model().get_all()
             return self.view.display_players_list(all_players)
         elif menu_option == "2":
             return self.view.display_create_player()
@@ -45,8 +44,8 @@ class PlayerController(object):
             message = "Désolé, ce menu n'est pas encore implémenté !\nVeuillez réessayer : "
             return self.view.navigate_to_menu(message)
         elif menu_option == "4":
-            message = "Désolé, ce menu n'est pas encore implémenté !\nVeuillez réessayer : "
-            return self.view.navigate_to_menu(message)
+            all_players = self.model().get_all()
+            return self.view.display_erase_player(all_players)
         elif menu_option == "X":
             return self.view.display_home()
         elif menu_option == "Z":
