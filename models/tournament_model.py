@@ -31,7 +31,7 @@ class Tournament:
         self.nombre_tour = nombre_tour
         self.description = description
         self.rounds = []
-        self.players = []
+        self.players_in = []
         self.db = TinyDB('db.json')
         self.type = "tournoi"
     
@@ -61,7 +61,7 @@ class Tournament:
         par le le score et le rang puis renvoie la liste
         """
         s = sorted(
-            self.players,
+            self.players_in,
             key=lambda player: int(Player.get_player(player[0]).classement),
             reverse=True
         )  # sort by rank
@@ -83,6 +83,7 @@ class Tournament:
         """
         return self.db.search(Query().type == "tournoi")
 
+    @Decorators.to_db
     def generate_matches(self):
         """ Choisis les joueurs
         créer des matches en fonction du nombre de round :
@@ -100,20 +101,20 @@ class Tournament:
         """
         list_of_matches = []
         round = self.create_round()
-        players = self.get_suisse_sorted_players()
+        players_in = self.get_suisse_sorted_players()
         if len(self.rounds) == 1:
             for i in range(self.nombre_tour):
-                match = Match(players[i][0], players[i + self.nombre_tour][0])
+                match = Match(players_in[i][0], players_in[i + self.nombre_tour][0])
                 list_of_matches.append(match)
         else:
-            while len(players) > 1:
+            while len(players_in) > 1:
                 y = 1
-                while self.played_against(players[0][0], players[y][0]):
+                while self.played_against(players_in[0][0], players_in[y][0]):
                     y += 1
-                match = Match(players[0][0], players[y][0])
+                match = Match(players_in[0][0], players_in[y][0])
                 list_of_matches.append(match)
-                del players[y]
-                del players[0]
+                del players_in[y]
+                del players_in[0]
         round.add_matches(list_of_matches)
     
     def played_against(self, player_one, player_two):
@@ -121,6 +122,9 @@ class Tournament:
         for round in self.rounds:
             for match in round.matches:
                 opposition.append([match.result[0][0], match.result[1][0]])
+
+        return [player_one, player_two] in opposition \
+            or [player_two, player_one] in opposition
     
     def create_round(self):
         round_name = 'Round' + str(len(self.rounds) + 1)
@@ -131,3 +135,46 @@ class Tournament:
     def add_matches(self, list_of_matches: list):
         for match in list_of_matches:
             self.list_of_matches.append(match)
+    
+    def serialize(self):
+        return {
+            'reference': self.reference,
+            'date_début': self.date_début,
+            'date_fin' : self.date_fin,
+            'nombre_tour': self.nombre_tour,
+            'rounds': [Round.serialize() for round in self.rounds],
+            'players_in': self.players_in,
+            'description': self.description,
+        }
+
+    def get_tournament(self):
+        self.tournaments_list = Tournament().db.search(Query().type == "tournoi")
+        return self.tournaments_list[0]
+
+    @classmethod
+    def deserialize(cls, serialized_tournament):
+        reference = serialized_tournament['reference']
+        date_début = serialized_tournament['date_début']
+        date_fin = serialized_tournament['date_fin']
+        nombre_tour = serialized_tournament['nombre_tour']
+        description = serialized_tournament['description']
+        tournament = Tournament(reference, date_début, date_fin, nombre_tour,
+                                description)
+        tournament.rounds = [
+            Round.deserialize(serialized_round)
+            for serialized_round in serialized_tournament['rounds']
+        ]
+        tournament.players_in = serialized_tournament['players_in']
+
+        return tournament
+    
+    def update_players_score(self):
+        for player in self.players_in:
+            score = 0
+            for round in self.rounds:
+                for match in round.matches:
+                    if player[0] == match.result[0][0]:
+                        score += match.result[0][1]
+                    if player[0] == match.result[1][0]:
+                        score += match.result[1][1]
+            player[1] = score

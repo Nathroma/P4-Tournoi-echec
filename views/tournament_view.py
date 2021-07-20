@@ -1,5 +1,8 @@
+from models.tournament_model import Tournament
+from models.player_model import Player
 from random import randint
 from tinydb import Query, TinyDB
+from controllers.player_controller import PlayerController
 
 class TournamentView:
 
@@ -85,7 +88,30 @@ class TournamentView:
                 Ou bien vous pouvez sortir du programme en saisissant l'option X\n""" 
         
         self.navigate_to_menu(message)
-    
+
+    def add_player_to_tournament(self):
+        #1. Afficher le message de la vue : Veuillez choisir le joueur à ajouter au tournois
+        print('Choisisser les joueurs à ajouter :\n')
+
+        #2. Récupérer la liste des joueurs au niveau du contrôler
+        list_players = PlayerController.get_all(self)
+
+        #3. Afficher la liste des joueurs récupérée
+        if len(Tournament().players_in) > 0 :
+            message = "Il y a déja " + str(len(Tournament().players_in)) + "joueur(s)\n"
+        elif len(Tournament().players_in) == 0 :
+            message = "Il n'y a aucun joueur, ajoutez-en au moins 2\n"
+        print(message)
+        player_number = 1
+        for player in list_players:
+            print(str(player_number) + ') ' + player['nom'], player['prenom'] +'  [' ,
+                str(player['classement']) + ' ]')
+            player_number += 1
+
+        #4. Demander à l’utilisateur le joueur à afficher
+        print("Selectionnez le joueur à ajouter")
+        
+
     @staticmethod
     def result_menu(match):
         print(
@@ -101,9 +127,7 @@ class TournamentView:
     @staticmethod
     def scoring_menu(round):
         print(
-            '----------------------------------------------------',
             'Score du match : ' + round.name,
-            '----------------------------------------------------',
             'Choisissez le match :',
             '    [0] Retour',
             sep='\n'

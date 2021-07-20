@@ -1,4 +1,5 @@
 import os, sys
+from tinydb import TinyDB, Query
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
@@ -8,6 +9,7 @@ from models.tournament_model import Tournament
 from views.home_view import HomeView
 from views.tournament_view import TournamentView
 from models.player_model import Player
+from controllers.player_controller import PlayerController
 from models.round_model import Round   
 from models.match_model import Match
 
@@ -22,7 +24,6 @@ class TournamentController(object):
     def save_tournament(self, tournament):
         new_tournament = self.model(tournament['reference'], tournament['date_début'],
                 tournament['date_fin'], tournament['description'])
-        print('saving...')
         return new_tournament.save()
 
     def display_home(self):
@@ -45,11 +46,10 @@ class TournamentController(object):
         elif menu_option == "3":
             message = "Désolé, ce menu n'est pas encore implémenté !\nVeuillez réessayer : "
             return self.view.navigate_to_menu(message)
-        elif menu_option == "4":
-            return Tournament().generate_matches() 
+        elif menu_option == "4" :
+            return self.add_player_to_tournament()
         elif menu_option == "5":
-            all_lists = self.model.get_lists()
-            return self.view.generate_pairs(all_lists)
+            return self.view.add_player_to_tournament()
         elif menu_option == "X":
             return self.view.display_home()
         elif menu_option == "Z":
@@ -58,7 +58,7 @@ class TournamentController(object):
     def score(self, tournament: Tournament, round: Round, match: Match):
         TournamentView.result_menu(match)
         choice = input()
-        if choice == '0':  # back last Menu
+        if choice == '0':  # retour menu précédent
             return self.match_index(tournament, round)
         if choice == '1':
             match.set_result(1, 0)
@@ -71,21 +71,28 @@ class TournamentController(object):
         else:
             return self.score(tournament, round, match)
 
-        tournament.update_players_score()
+        Tournament.update_players_score()
         return self.match_index(tournament, round)
-
-    def update_players_score(self):
-        for player in self.players:
-            score = 0
-            for round in self.rounds:
-                for match in round.matches:
-                    if player[0] == match.result[0][0]:
-                        score += match.result[0][1]
-                    if player[0] == match.result[1][0]:
-                        score += match.result[1][1]
-            player[1] = score
 
     def leaderboard(self, tournament):
         for player in tournament.get_suisse_sorted_players():
-            print('[{}]'.format(player[1]), Player.get_player(player[0]))
+            print('[{}]'.format(player[1]), Player().get_player(player[0]))
+
+    def add_player_to_tournament(self):
+        tournament = self.model.get_tournament(self)
+        if len(Tournament.players_in) < 2 * Tournament().nombre_tour:
+            TournamentView.add_player_to_tournament(self)
+        else :
+            print("Génère le matche...")
+            return self.model.generate_matches(self)
         
+        choosen_player = int(input())
+        choosen_player -= 1
+        list_players = PlayerController.get_all(self)
+        if choosen_player in range(1, len(list_players)):
+            Tournament.players_in.append(list_players[choosen_player])
+        else :
+            print("Valeur incorrect !")
+        print('liste de joueur : ' + str(Tournament.players_in))
+    
+        return self.add_player_to_tournament()

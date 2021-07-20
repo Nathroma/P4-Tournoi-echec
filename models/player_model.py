@@ -54,16 +54,15 @@ class Player(object):
         # 2. On enregistre l'objet joueur
         return self.db.insert(player)
 
-
     def get_all(self):
         """
         Todo: Se connecter à la base de données et récupérer tous les joueurs 
         """
         return self.db.search(Query().type == "player")
 
-    @classmethod
-    def get_player(cls):
-        return cls.players_list
+    def get_player(self):
+        self.players_list = Player().db.search(Query().type == "tournoi")
+        return self.players_list
     
     def serialize(self):
         return {

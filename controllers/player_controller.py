@@ -50,5 +50,9 @@ class PlayerController(object):
             return self.view.display_home()
         elif menu_option == "Z":
             return self.parent_view.display_home()
+    
+    def get_all(self):
+        return Player().get_all()
+        
 
 
