@@ -31,7 +31,7 @@ class TournamentView:
         [1]: Liste des tournois\n
         [2]: Ajouter un nouveau tournoi\n
         [4]: Générer un match\n
-        [0]: Retourner au menu parent (pas encore implémenté)\n
+        [0]: Retourner au menu parent\n
         [X]: Aller au menu précédent (pas encore implémenté)\n
         [Z]: Sortir de l'application (pas encore implémenté)\n
         """
@@ -97,11 +97,16 @@ class TournamentView:
         list_players = PlayerController.get_all(self)
 
         #3. Afficher la liste des joueurs récupérée
-        if len(Tournament().players_in) > 0 :
-            message = "Il y a déja " + str(len(Tournament().players_in)) + "joueur(s)\n"
-        elif len(Tournament().players_in) == 0 :
-            message = "Il n'y a aucun joueur, ajoutez-en au moins 2\n"
-        print(message)
+        if len(self.controller.get_players_in()) > 0 :
+            print( "Il y a déja ", 
+                    str(len(self.controller.get_players_in())), 
+                    " joueur(s)",
+                    "Ajoutez-en encore ",
+                    str((2 * int(self.controller.get_tournament()["nombre_tour"]))
+                        - len(self.controller.get_players_in()))
+                 )
+        elif len(self.controller.get_players_in()) == 0 :
+            print("Il n'y a aucun joueur, ajoutez-en au moins 2\n")
         player_number = 1
         for player in list_players:
             print(str(player_number) + ') ' + player['nom'], player['prenom'] +'  [' ,
@@ -109,7 +114,7 @@ class TournamentView:
             player_number += 1
 
         #4. Demander à l’utilisateur le joueur à afficher
-        print("Selectionnez le joueur à ajouter")
+        print("\nSelectionnez le joueur à ajouter")
         
 
     @staticmethod
@@ -117,20 +122,56 @@ class TournamentView:
         print(
             'Choisissez le resultat du match :',
             '    [0] Retour',
-            '    [1] Gagnant : ' + match.get_player_name(match.player_one),
-            '    [2] Gagnant : ' + match.get_player_name(match.player_two),
+            '    [1] Gagnant : ' ,
+            '    [2] Gagnant : ' ,
             '    [3] Egalité',
             '    [4] Annulé',
             sep='\n'
         )
 
-    @staticmethod
-    def scoring_menu(round):
+
+    def scoring_menu(self):
+        list_joueurs = self.controller.get_list_players_in_match()
+        nb = 0
+        print('Selectionnez le match pour y entrer les scores : \n')
+        for match in list_joueurs:
+            print('Match n°' + str(nb + 1) + ' : ' + str(list_joueurs[nb]))
+            nb += 1
+    
+    def scoring_match(self, player_one , player_two):
+        #list_joueurs = self.controller.get_list_players_in_match()
+        print(player_one + "  :  " + player_two)
         print(
-            'Score du match : ' + round.name,
-            'Choisissez le match :',
+            'Choisissez le resultat du match :',
             '    [0] Retour',
+            '    [1] Gagnant : ' + str(player_one[0]) ,
+            '    [2] Gagnant : ' + str(player_two[1]) ,
+            '    [3] Egalité',
+            '    [4] Annulé',
             sep='\n'
         )
-        for i, match in enumerate(round.list_of_matches, start=1):
-            print('    [' + str(i) + '] ' + match.result_to_string())
+
+
+    @staticmethod
+    def ask_continue():
+        print(
+            '   Tous les matches et joueur ont etait généré',
+            '   Vous pouvez ajoutez les scores ou retourner au menu parent :',
+            '',
+            '   [0] Retour',
+            '   [1] Ajouter les scores',
+            sep='\n'
+            )
+
+
+    @staticmethod
+    def manage_tournament():
+        print('\n     Menu du tournoi :\n\n')
+        print(
+            '   [0] Retour\n',
+            '   [1] Ajouter les joueurs\n',
+            '   [2] Générer les matches\n',
+            '   [3] Entrer les scores\n',
+            sep='\n'  
+        )
+

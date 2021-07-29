@@ -10,6 +10,20 @@ from views.player_view import PlayerView
 
 
 class PlayerController(object):
+    def index(self):
+        self.view.launch()
+        choice = input()
+        if choice == '0':
+            return self.parent_view.display_home()
+        elif choice == '1':
+            self.add_player()
+        elif choice == '2':
+            player_id = self.select_player()
+            if player_id is not None:
+                player = Player.get_player(player_id)
+                self.edit_rank(player)
+        return self.index()
+
     def __init__(self, parent_view):
         # A la création du controleur, on peut le lier à son modèle et sa vue
         self.model = Player

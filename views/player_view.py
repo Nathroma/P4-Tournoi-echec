@@ -52,6 +52,17 @@ class PlayerView(object):
         """.format(player.nom, player.prenom, player.date_naissance, player.sexe, player.classement)
         self.navigate_to_menu(message)
 
+    @staticmethod
+    def launch():
+        print(
+            'Player Menu',
+            '',
+            '    [0] <== Retour',
+            '    [1] Creer un joueur',
+            '    [2] Editer classement joueur',
+            sep='\n'
+        )
+
 
     def display_players_list(self, players_list):
         """

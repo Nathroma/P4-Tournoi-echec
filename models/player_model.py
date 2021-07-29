@@ -60,9 +60,10 @@ class Player(object):
         """
         return self.db.search(Query().type == "player")
 
-    def get_player(self):
-        self.players_list = Player().db.search(Query().type == "tournoi")
-        return self.players_list
+    @classmethod
+    def get_player(cls, ref):
+        cls.players_list = Player().db.search(Query().type == "player")
+        return cls.players_list[ref]
     
     def serialize(self):
         return {

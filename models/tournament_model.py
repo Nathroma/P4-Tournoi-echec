@@ -5,23 +5,8 @@ from models.player_model import Player
 from models.round_model import Round
 
 class Tournament:
-    class Decorators(object):
-        @classmethod
-        def to_db(cls, func):
-            def save_into_db(*args, **kwargs):
-                func(*args, **kwargs)
-                serialized_tournament = [
-                    tournament.serialize()
-                    for tournament in Tournament.tournaments_list
-                ]
-                db = TinyDB('db.json')
-                tournaments_table = db.table('tournaments')
-                tournaments_table.truncate()
-                tournaments_table.insert_multiple(serialized_tournament)
-
-            return save_into_db
-
     tournaments_list = []
+
 
     def __init__(self, reference="", date_début="", date_fin="",
                     nombre_tour=4, description=""):
@@ -32,12 +17,16 @@ class Tournament:
         self.description = description
         self.rounds = []
         self.players_in = []
+        self.players = []
+        self.list_of_matches = []
         self.db = TinyDB('db.json')
         self.type = "tournoi"
     
+
     def __str__(self):
         return self.reference + ' - ' + self.date_début + ' - ' + self.date_fin + \
             ' - ' + self.description
+
 
     def save(self):
         """
@@ -55,27 +44,27 @@ class Tournament:
 
         # 2. On enregistre l'objet joueur
         return self.db.insert(tournament)
+
+
+    def add_player(self, player_id):
+        self.players.append([player_id, 0])  # second argument is the score
     
+
     def get_suisse_sorted_players(self):
         """ Affiche la liste des joueurs du tournoi
         par le le score et le rang puis renvoie la liste
         """
         s = sorted(
-            self.players_in,
+            self.players,
             key=lambda player: int(Player.get_player(player[0]).classement),
             reverse=True
-        )  # sort by rank
+        )  # Trier par classement
         return sorted(
             s,
             key=lambda player: float(player[1]),
             reverse=True
-        )  # then sort by score
+        )  # puis par score
 
-    def create_round(self):
-        round_name = 'Round' + str(len(self.rounds) + 1)
-        round = Round(round_name)
-        self.rounds.append(round)
-        return round
 
     def get_all_tournament(self):
         """
@@ -83,7 +72,7 @@ class Tournament:
         """
         return self.db.search(Query().type == "tournoi")
 
-    @Decorators.to_db
+
     def generate_matches(self):
         """ Choisis les joueurs
         créer des matches en fonction du nombre de round :
@@ -99,42 +88,57 @@ class Tournament:
                 Joueur 3 VS Joueur 4
                 etc
         """
-        list_of_matches = []
+        
         round = self.create_round()
-        players_in = self.get_suisse_sorted_players()
+        players_in_short = self.players_trunc()
         if len(self.rounds) == 1:
             for i in range(self.nombre_tour):
-                match = Match(players_in[i][0], players_in[i + self.nombre_tour][0])
-                list_of_matches.append(match)
+                match = Match(players_in_short[i], players_in_short[i + self.nombre_tour])
+                print(match)
+                self.list_of_matches.append(match)
         else:
-            while len(players_in) > 1:
+            while len(players_in_short) > 1:
                 y = 1
-                while self.played_against(players_in[0][0], players_in[y][0]):
+                while self.played_against(players_in_short[0], players_in_short[y]):
                     y += 1
-                match = Match(players_in[0][0], players_in[y][0])
-                list_of_matches.append(match)
-                del players_in[y]
-                del players_in[0]
-        round.add_matches(list_of_matches)
+                match = Match(players_in_short[0], players_in_short[y])
+                self.list_of_matches.append(match)
+                del players_in_short[y]
+                del players_in_short[0]
+        round.add_matches(self.list_of_matches)
     
+
+    def players_trunc(self):
+        players_in_short = []
+        for i in range(len(self.players_in)) :
+            player_raw = self.players_in[i]
+            player_tr = player_raw["nom"],player_raw["prenom"],player_raw['classement']
+            players_in_short.append(player_tr)
+        return players_in_short
+    
+
     def played_against(self, player_one, player_two):
         opposition = []
         for round in self.rounds:
             for match in round.matches:
                 opposition.append([match.result[0][0], match.result[1][0]])
+                print("played-against")
 
         return [player_one, player_two] in opposition \
             or [player_two, player_one] in opposition
+
     
     def create_round(self):
         round_name = 'Round' + str(len(self.rounds) + 1)
         round = Round(round_name)
         self.rounds.append(round)
         return round
+
     
     def add_matches(self, list_of_matches: list):
         for match in list_of_matches:
             self.list_of_matches.append(match)
+
     
     def serialize(self):
         return {
@@ -147,9 +151,11 @@ class Tournament:
             'description': self.description,
         }
 
+
     def get_tournament(self):
         self.tournaments_list = Tournament().db.search(Query().type == "tournoi")
         return self.tournaments_list[0]
+
 
     @classmethod
     def deserialize(cls, serialized_tournament):
@@ -168,6 +174,7 @@ class Tournament:
 
         return tournament
     
+
     def update_players_score(self):
         for player in self.players_in:
             score = 0
