@@ -33,7 +33,7 @@ class HomeController(object):
 
         [1]: Gérer les tournois\n
         [2]: Gérer les joueurs\n
-        [3]: Gérer les tournées\n
+        [3]: N/a\n
         [4]: N/a\n
         [X]: Sortir de l'application (pas encore implémenté)\n
         """

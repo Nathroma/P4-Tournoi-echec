@@ -64,26 +64,7 @@ class Player(object):
     def get_player(cls, ref):
         cls.players_list = Player().db.search(Query().type == "player")
         return cls.players_list[ref]
-    
-    def serialize(self):
-        return {
-            'nom': self.nom,
-            'prenom': self.prenom,
-            'date_naissance': self.date_naissance,
-            'sexe': self.sexe,
-            'classement': self.classement,
-            'type': self.type
-        }
-    
-    @classmethod
-    def deserialize(cls, serialized_player):
-        nom = serialized_player['nom']
-        prenom = serialized_player['prenom']
-        date_naissance = serialized_player['date_naissance']
-        sexe = serialized_player['sexe']
-        classement = serialized_player['classement']
-        type = serialized_player['type']
-        return Player(nom, prenom, date_naissance, sexe, classement, type)
+
 
     @classmethod
     def save_all_to_db(cls):

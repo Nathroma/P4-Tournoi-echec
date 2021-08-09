@@ -45,16 +45,15 @@ class TournamentController(object):
         elif menu_option == "2":
             return self.view.display_create_tournament()
         elif menu_option == "3":
-            message = "Désolé, ce menu n'est pas encore implémenté !\nVeuillez réessayer : "
-            return self.view.navigate_to_menu(message)
-        elif menu_option == "4" :
             return self.menu_manage_tournament()
-        elif menu_option == "5":
-            pass
+        elif menu_option == "4" :
+            return self.display_results()
         elif menu_option == "X":
             return self.view.display_home()
         elif menu_option == "Z":
             return self.parent_view.display_home()
+        else: 
+            print('Choix invalide')
     
 
     def menu_manage_tournament(self):
@@ -75,8 +74,7 @@ class TournamentController(object):
             return self.menu_manage_tournament()
 
 
-    def score(self, match: Match):
-        self.view.result_menu(match)
+    def score(self, match: Match, player_one, player_two):
         option = int(input())
         if option == 0:  # retour menu précédent
             return self.match_index()
@@ -91,9 +89,30 @@ class TournamentController(object):
         else:
             return self.score()
 
-        self.model.update_players_score()
+        self.model.results_matches.append(match.resultat())
+        #self.update_score(match, player_one, player_two)
         return self.match_index()
-    
+
+    def display_results(self):
+        tournaments_list = self.model.get_all_tournament()
+        self.view.choose_tournament_list(tournaments_list)
+        option = int(input())
+        option -= 1
+        list_results = self.get_results()
+        nb = 0
+        print('Liste des resultats :\n')
+        for score in list_results:
+            print('Match n°' + str(nb) + ' : ' + str(list_results[nb]))
+            nb += 1
+            
+        self.view.ask_continue()
+        choice = int(input())
+        if choice == 0:
+            return self.display_home()
+        else:
+            return self.display_home()
+
+
 
     def match_index(self):
         # 1) récuperer la liste des matches
@@ -105,19 +124,19 @@ class TournamentController(object):
         # 3) Slectionner le match à scorer 
         option = int(input())
         option -= 1
-        print(list_joueurs)
-        print('Test 1 : ' + str(list_joueurs[option][0]))
-        print('Test 2 : ' + str(list_joueurs[option][1]))
-        player_one = list_joueurs[option][0]
-        player_two = list_joueurs[option][1]
+        if option == -1:
+            return self.display_home()
+        else:
+            #match = Match(list_joueurs[option])
+            player_one = list_joueurs[option].player_one
+            player_two = list_joueurs[option].player_two
 
         # 4) entrer le resultat du match (Gagnant, perdant, égalité)
         self.view.scoring_match(player_one, player_two)
 
-
         # 4) Ajouter les scores aux joueurs 
-        # 5) Afficher les scores finaux
-        pass
+        return self.score(list_joueurs[option], player_one, player_two)
+            
     
     def get_list_players_in_match(self):
         return self.model.list_of_matches
@@ -131,6 +150,12 @@ class TournamentController(object):
     def get_player_list(self):
         self.players_list = Player.get_player()
         return self.players_list
+    
+    def get_matches(self):
+        return self.model.list_of_matches
+
+    def get_results(self):
+        return self.model.results_matches
 
     def add_player_to_tournament(self):
         tournament = self.model.get_tournament()

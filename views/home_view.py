@@ -24,9 +24,7 @@ class HomeView(object):
         Voici les actions possibles depuis ce menu : \n
         [1]: Gérer les tournois\n
         [2]: Gérer les joueurs\n
-        [3]: Gérer les tournées\n
-        [0]: Retourner au menu parent (pas encore implémenté)\n
-        [X]: Sortir de l'application (pas encore implémenté)\n
+        [X]: Sortir de l'application\n
         """
         self.navigate_to_menu(message)
 

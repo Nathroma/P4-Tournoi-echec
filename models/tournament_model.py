@@ -19,6 +19,7 @@ class Tournament:
         self.players_in = []
         self.players = []
         self.list_of_matches = []
+        self.results_matches = []
         self.db = TinyDB('db.json')
         self.type = "tournoi"
     
@@ -112,20 +113,9 @@ class Tournament:
         players_in_short = []
         for i in range(len(self.players_in)) :
             player_raw = self.players_in[i]
-            player_tr = player_raw["nom"],player_raw["prenom"],player_raw['classement']
+            player_tr = player_raw["nom"],player_raw["prenom"]
             players_in_short.append(player_tr)
         return players_in_short
-    
-
-    def played_against(self, player_one, player_two):
-        opposition = []
-        for round in self.rounds:
-            for match in round.matches:
-                opposition.append([match.result[0][0], match.result[1][0]])
-                print("played-against")
-
-        return [player_one, player_two] in opposition \
-            or [player_two, player_one] in opposition
 
     
     def create_round(self):
@@ -139,49 +129,8 @@ class Tournament:
         for match in list_of_matches:
             self.list_of_matches.append(match)
 
-    
-    def serialize(self):
-        return {
-            'reference': self.reference,
-            'date_début': self.date_début,
-            'date_fin' : self.date_fin,
-            'nombre_tour': self.nombre_tour,
-            'rounds': [Round.serialize() for round in self.rounds],
-            'players_in': self.players_in,
-            'description': self.description,
-        }
-
 
     def get_tournament(self):
         self.tournaments_list = Tournament().db.search(Query().type == "tournoi")
         return self.tournaments_list[0]
-
-
-    @classmethod
-    def deserialize(cls, serialized_tournament):
-        reference = serialized_tournament['reference']
-        date_début = serialized_tournament['date_début']
-        date_fin = serialized_tournament['date_fin']
-        nombre_tour = serialized_tournament['nombre_tour']
-        description = serialized_tournament['description']
-        tournament = Tournament(reference, date_début, date_fin, nombre_tour,
-                                description)
-        tournament.rounds = [
-            Round.deserialize(serialized_round)
-            for serialized_round in serialized_tournament['rounds']
-        ]
-        tournament.players_in = serialized_tournament['players_in']
-
-        return tournament
-    
-
-    def update_players_score(self):
-        for player in self.players_in:
-            score = 0
-            for round in self.rounds:
-                for match in round.matches:
-                    if player[0] == match.result[0][0]:
-                        score += match.result[0][1]
-                    if player[0] == match.result[1][0]:
-                        score += match.result[1][1]
-            player[1] = score
+   
