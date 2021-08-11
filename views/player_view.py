@@ -28,9 +28,8 @@ class PlayerView(object):
         Voici les actions possibles depuis ce menu : \n
         [1]: Afficher tous les joueurs\n
         [2]: Ajouter un nouveau joueur\n
-        [0]: Retourner au menu parent (pas encore implémenté)\n
-        [X]: Aller au menu précédent (pas encore implémenté)\n
-        [Z]: Sortir de l'application (pas encore implémenté)\n
+        [0]: Retourner au menu parent \n
+        [Z]: Sortir de l'application\n
         """
         self.navigate_to_menu(message)
         

@@ -14,7 +14,7 @@ class Tournament:
         self.date_début = date_début
         self.date_fin = date_fin
         self.nombre_tour = nombre_tour
-        self.description = description
+        self.description = str(description)
         self.rounds = []
         self.players_in = []
         self.players = []
@@ -23,6 +23,10 @@ class Tournament:
         self.db = TinyDB('db.json')
         self.type = "tournoi"
     
+    def create_tournament(self, tournament):
+        new_tournament = (tournament['reference'], tournament['date_début'],
+                tournament['date_fin'], tournament['description'])
+        return new_tournament
 
     def __str__(self):
         return self.reference + ' - ' + self.date_début + ' - ' + self.date_fin + \
@@ -45,27 +49,7 @@ class Tournament:
 
         # 2. On enregistre l'objet joueur
         return self.db.insert(tournament)
-
-
-    def add_player(self, player_id):
-        self.players.append([player_id, 0])  # second argument is the score
     
-
-    def get_suisse_sorted_players(self):
-        """ Affiche la liste des joueurs du tournoi
-        par le le score et le rang puis renvoie la liste
-        """
-        s = sorted(
-            self.players,
-            key=lambda player: int(Player.get_player(player[0]).classement),
-            reverse=True
-        )  # Trier par classement
-        return sorted(
-            s,
-            key=lambda player: float(player[1]),
-            reverse=True
-        )  # puis par score
-
 
     def get_all_tournament(self):
         """

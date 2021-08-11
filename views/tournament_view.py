@@ -1,6 +1,5 @@
 from models.tournament_model import Tournament
 from models.player_model import Player
-from random import randint
 from tinydb import Query, TinyDB
 from controllers.player_controller import PlayerController
 
@@ -32,8 +31,7 @@ class TournamentView:
         [2]: Ajouter un nouveau tournoi\n
         [3]: Générer un match\n
         [0]: Retourner au menu parent\n
-        [X]: Aller au menu précédent (pas encore implémenté)\n
-        [Z]: Sortir de l'application (pas encore implémenté)\n
+        [Z]: Sortir de l'application\n
         """
         self.navigate_to_menu(message)
 
@@ -146,9 +144,9 @@ class TournamentView:
         for match in list_joueurs:
             print('Match n°' + str(nb + 1) + ' : ' + str(list_joueurs[nb]))
             nb += 1
+
     
     def scoring_match(self, player_one , player_two):
-        #list_joueurs = self.controller.get_list_players_in_match()
         print(str(player_one) + "  :  " + str(player_two))
         print(
             'Choisissez le resultat du match :',

@@ -23,8 +23,7 @@ class TournamentController(object):
         self.players_list = []
 
     def save_tournament(self, tournament):
-        new_tournament = self.model(tournament['reference'], tournament['date_début'],
-                tournament['date_fin'], tournament['description'])
+        new_tournament = self.model.create_tournament(tournament)
         return new_tournament.save()
 
     def display_home(self):
@@ -104,7 +103,7 @@ class TournamentController(object):
         for score in list_results:
             print('Match n°' + str(nb) + ' : ' + str(list_results[nb]))
             nb += 1
-            
+
         self.view.ask_continue()
         choice = int(input())
         if choice == 0:
@@ -127,7 +126,6 @@ class TournamentController(object):
         if option == -1:
             return self.display_home()
         else:
-            #match = Match(list_joueurs[option])
             player_one = list_joueurs[option].player_one
             player_two = list_joueurs[option].player_two
 
