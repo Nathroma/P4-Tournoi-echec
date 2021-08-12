@@ -1,5 +1,6 @@
 from tinydb import TinyDB, Query
 
+
 class Player(object):
     players_list = []
 
@@ -16,7 +17,6 @@ class Player(object):
         return self.nom + ' - ' + self.prenom + ' - ' + self.date_naissance + \
             ' - ' + self.sexe + ' - ' + self.classement
 
-    
     def save(self):
         """
         Todo: Se connecter à la BD et enregistrer le joueur
@@ -36,7 +36,7 @@ class Player(object):
 
     def get_all(self):
         """
-        Todo: Se connecter à la base de données et récupérer tous les joueurs 
+        Todo: Se connecter à la base de données et récupérer tous les joueurs
         """
         return self.db.search(Query().type == "player")
 
@@ -45,10 +45,10 @@ class Player(object):
         cls.players_list = Player().db.search(Query().type == "player")
         return cls.players_list[ref]
 
-
     @classmethod
     def save_all_to_db(cls):
-        serialized_players = [player.serialize() for player in cls.players_list]
+        serialized_players = \
+            [player.serialize() for player in cls.players_list]
         db = TinyDB('db.json')
         players_table = db.table('players')
         players_table.truncate()

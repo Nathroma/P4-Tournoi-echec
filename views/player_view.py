@@ -1,23 +1,22 @@
-from models.player_model import Player
 from tinydb import Query, TinyDB
+
 
 class PlayerView(object):
     def __init__(self, controller):
         self.controller = controller
         self.db = TinyDB('db.json')
 
-
     def navigate_to_menu(self, message):
         """
-        Cette fonction permet de récupérer l'option saisie par un utilisateur et ensuite
-        d'utiliser de naviger vers le menu correspondant à cette
+        Cette fonction permet de récupérer l'option saisie par un utilisateur
+        et ensuite d'utiliser de naviger vers le menu correspondant à cette
         """
         # On récupère l'option saisie par le client
-        # La récupération de l'option doit être améliorée pour gérer les cas d'erreur de saisie
+        # La récupération de l'option doit être améliorée pour gérer les cas
+        # d'erreur de saisie
         option = input(message)
         # Une fois qu'on a récupéré l'option, on navigue vers la page suggérée
         self.controller.go_to_menu(option)
-
 
     def display_home(self):
         """
@@ -32,7 +31,6 @@ class PlayerView(object):
         [Z]: Sortir de l'application\n
         """
         self.navigate_to_menu(message)
-        
 
     def display_player(self, player):
         """
@@ -45,10 +43,12 @@ class PlayerView(object):
         Date de naissance: {2}\n
         Sexe: {3}\n
         Classement: {4}\n
-        
-        Vous pouvez retourner au menu de gestion des joueurs en saisissant l'option [0]\n
+
+        Vous pouvez retourner au menu de gestion des joueurs en saisissant
+        l'option [0]\n
         Ou bien vous pouvez sortir du programme en saisissant l'option [X]\n
-        """.format(player.nom, player.prenom, player.date_naissance, player.sexe, player.classement)
+        """.format(player.nom, player.prenom, player.date_naissance,
+                   player.sexe, player.classement)
         self.navigate_to_menu(message)
 
     @staticmethod
@@ -62,7 +62,6 @@ class PlayerView(object):
             sep='\n'
         )
 
-
     def display_players_list(self, players_list):
         """
         Affiche la liste de joueurs
@@ -70,16 +69,17 @@ class PlayerView(object):
         message = ""
 
         if len(players_list) == 0:
-            message = "La liste de joueurs est vide !\n"    
+            message = "La liste de joueurs est vide !\n"
 
         for player in players_list:
             message += player.__str__() + '\n'
 
         message += """
-        Vous pouvez retourner au menu de gestion des joueurs en saisissant l'option 0\n
+        Vous pouvez retourner au menu de gestion des joueurs en saisissant
+        l'option 0\n
         Ou bien vous pouvez sortir du programme en saisissant l'option X\n
         """
-        
+
         self.navigate_to_menu(message)
 
     def display_create_player(self):
@@ -90,7 +90,8 @@ class PlayerView(object):
         print(message)
         nom = input("\nVeuillez entrer le nom : ")
         prenom = input("\nVeuillez entrer le prenom : ")
-        date_naissance = input("\nVeuillez entrer la date de naissance (dd/mm/yyyy) : ")
+        date_naissance = input("""\nVeuillez entrer la date de naissance
+                               (dd/mm/yyyy) : """)
         sexe = input("\nVeuillez entrer le sexe du joueur : ")
 
         player = {
@@ -103,12 +104,16 @@ class PlayerView(object):
         result = self.controller.save_player(player)
 
         if result == {}:
-            print("Une erreur s'est produite lors de l'enregistrement du joueur !")
-        
-        message += """Le joueur a bien été créé et sauvegardé en base de données\n
-                Vous pouvez retourner au menu de gestion des joueurs en saisissant l'option 0\n
-                Ou bien vous pouvez sortir du programme en saisissant l'option X\n""" 
-        
+            print("""Une erreur s'est produite lors de l'enregistrement
+                  du joueur !""")
+
+        message += """Le joueur a bien été créé et sauvegardé en
+                      base de données\n
+                      Vous pouvez retourner au menu de gestion
+                      des joueurs en saisissant l'option 0\n
+                      Ou bien vous pouvez sortir du programme
+                      en saisissant l'option X\n"""
+
         self.navigate_to_menu(message)
 
     def display_erase_player(self):
