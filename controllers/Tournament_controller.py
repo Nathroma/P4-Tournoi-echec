@@ -73,6 +73,9 @@ class TournamentController(object):
             return self.menu_manage_tournament()
 
     def score(self, match: Match, player_one, player_two):
+        """
+        Todo: ajoute les scores au joueur gagnant
+        """
         option = int(input())
         if option == 0:  # retour menu précédent
             return self.match_index()

@@ -39,7 +39,7 @@ class TournamentView:
 
     def display_tournaments_list(self, tournaments_list):
         """
-        Affiche la liste de tournoi
+        Todo: Affiche la liste de tournoi avec des numeros
         """
         number_tournament = 1
         message = "tournoi n°"
@@ -61,6 +61,9 @@ class TournamentView:
         self.navigate_to_menu(message)
 
     def choose_tournament_list(self, tournaments_list):
+        """
+        Todo: Affiche la liste de tournoi pour selection
+        """
         print('Choisissez le tournoi à afficher\n')
         nb = 0
         for i in tournaments_list:
@@ -70,7 +73,7 @@ class TournamentView:
 
     def display_create_tournament(self):
         """
-        Affiche le menu de création d'un tournoi
+        Todo: Affiche le menu de création d'un tournoi
         """
         message = "Vueillez entrer les informations du nouveau tournoi : \n"
         print(message)
@@ -130,19 +133,10 @@ class TournamentView:
         # 4. Demander à l’utilisateur le joueur à afficher
         print("\nSelectionnez le joueur à ajouter")
 
-    @staticmethod
-    def result_menu(match):
-        print(
-            'Choisissez le resultat du match :',
-            '    [0] Retour',
-            '    [1] Gagnant : ',
-            '    [2] Gagnant : ',
-            '    [3] Egalité',
-            '    [4] Annulé',
-            sep='\n'
-        )
-
     def scoring_menu(self):
+        """
+        Todo: Affiche tous les matches pour ajouter les scores
+        """
         list_joueurs = self.controller.get_list_players_in_match()
         nb = 0
         print('Selectionnez le match pour y entrer les scores : \n')
@@ -152,6 +146,9 @@ class TournamentView:
             nb += 1
 
     def scoring_match(self, player_one, player_two):
+        """
+        Todo: Affiche les possibilités de choix du gagnant
+        """
         print(str(player_one) + "  :  " + str(player_two))
         print(
             'Choisissez le resultat du match :',
@@ -168,6 +165,9 @@ class TournamentView:
         print('\nSelectionnez [0] pour continuer')
 
     def manage_tournament(self):
+        """
+        Todo: Affiche les menus du Round en cours
+        """
         matches = self.controller.get_matches()
         players = self.controller.get_players_in()
         print('\n     Menu du tournoi :\n\n')
