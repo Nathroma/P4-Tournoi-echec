@@ -1,26 +1,7 @@
 from tinydb import TinyDB, Query
 
-class Player(object):
-    
-    """
-    This model is used to save data from one Player 
-    """
-    class Decorators(object):
-        @classmethod
-        def to_db(cls, func):
-            def save_into_db(*args, **kwargs):
-                func(*args, **kwargs)
-                serialized_players = [
-                    player.serialize()
-                    for player in Player.players_list
-                ]
-                db = TinyDB('db.json')
-                players_table = db.table('players')
-                players_table.truncate()
-                players_table.insert_multiple(serialized_players)
-            return save_into_db
 
-    # Tableau à titre indicatif en attendant l'intégration de TinyDB
+class Player(object):
     players_list = []
 
     def __init__(self, nom="", prenom="", date_naissance="", sexe=""):
@@ -36,7 +17,6 @@ class Player(object):
         return self.nom + ' - ' + self.prenom + ' - ' + self.date_naissance + \
             ' - ' + self.sexe + ' - ' + self.classement
 
-    
     def save(self):
         """
         Todo: Se connecter à la BD et enregistrer le joueur
@@ -56,7 +36,7 @@ class Player(object):
 
     def get_all(self):
         """
-        Todo: Se connecter à la base de données et récupérer tous les joueurs 
+        Todo: Se connecter à la base de données et récupérer tous les joueurs
         """
         return self.db.search(Query().type == "player")
 
@@ -65,10 +45,10 @@ class Player(object):
         cls.players_list = Player().db.search(Query().type == "player")
         return cls.players_list[ref]
 
-
     @classmethod
     def save_all_to_db(cls):
-        serialized_players = [player.serialize() for player in cls.players_list]
+        serialized_players = \
+            [player.serialize() for player in cls.players_list]
         db = TinyDB('db.json')
         players_table = db.table('players')
         players_table.truncate()

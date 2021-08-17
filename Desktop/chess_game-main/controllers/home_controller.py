@@ -1,13 +1,13 @@
-import os, sys
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
-
 from models.tournament_model import Tournament
 from views.home_view import HomeView
 from controllers.player_controller import PlayerController
 from controllers.Tournament_controller import TournamentController
 from views.tournament_view import TournamentView
+import os
+import sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 
 class HomeController(object):
@@ -19,13 +19,11 @@ class HomeController(object):
         self.Tournament_controller = TournamentController(self.view)
         self.tournament_view = TournamentView(self)
 
-
     def display_home(self):
         """
         Permet l'affichage de la page de gestion des joueurs
         """
         return self.view.display_home()
-
 
     def go_to_menu(self, menu_option):
         """
@@ -45,10 +43,12 @@ class HomeController(object):
             return self.player_controller.display_home()
         elif menu_option == "3":
             # Menu de gestion des tournées
-            message = "Désolé, ce menu n'est pas encore implémenté !\nVeuillez réessayer : "
+            message = "Désolé, ce menu n'est pas encore implémenté !\
+                       \nVeuillez réessayer : "
             return self.view.navigate_to_menu(message)
         elif menu_option == "4":
-            message = "Désolé, ce menu n'est pas encore implémenté !\nVeuillez réessayer : "
+            message = "Désolé, ce menu n'est pas encore implémenté !\
+                       \nVeuillez réessayer : "
             return self.view.navigate_to_menu(message)
         elif menu_option == "5":
             return self.tournament_view.generate_pairs("test")

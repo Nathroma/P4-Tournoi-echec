@@ -1,6 +1,6 @@
 from datetime import datetime
-
 from models.match_model import Match
+
 
 class Round:
     def __init__(self, name):
@@ -8,7 +8,6 @@ class Round:
         self.start_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         self.matches = []
         self.end_time = False
-
 
     def add_match(self, match: Match):
         self.matches.append(match)

@@ -2,18 +2,18 @@ class HomeView(object):
     def __init__(self, controller=None):
         self.controller = controller
 
-
     def navigate_to_menu(self, message):
         """
-        Cette fonction permet de récupérer l'option saisie par un utilisateur et ensuite
-        d'utiliser de naviger vers le menu correspondant à cette option
+        Cette fonction permet de récupérer l'option saisie par un utilisateur
+        et ensuite d'utiliser de naviger vers le menu correspondant à cette
+        option
         """
         # On récupère l'option saisie par le client
-        # La récupération de l'option doit être améliorée pour gérer les cas d'erreur de saisie
+        # La récupération de l'option doit être améliorée pour gérer les cas
+        # d'erreur de saisie
         option = input(message)
         # Une fois qu'on a récupéré l'option, on navigue vers la page suggérée
         self.controller.go_to_menu(option)
-
 
     def display_home(self):
         """
@@ -27,4 +27,3 @@ class HomeView(object):
         [X]: Sortir de l'application\n
         """
         self.navigate_to_menu(message)
-
