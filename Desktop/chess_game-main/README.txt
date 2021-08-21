@@ -20,3 +20,7 @@ Installer les paquets
 
 Lancer le programme 
   - py app.py
+
+Flake8 :
+Lancer l'analyse Flake8
+  -flake8 --exclude=env --format=html --htmldir=reports
